@@ -4,31 +4,27 @@ from math import atan, sqrt, degrees, sin
 #PORT = '/dev/ttyUSB0'
 
 def cartesian_to_polar(*args):
-    coord = args[0] if len(args) == 1 else args
-    try:
-        output = sqrt(coord[0] ** 2 + coord[1] ** 2), degrees(atan(coord[0] / coord[1]))
-    except ZeroDivisionError:
-        output = 0,0
-    if coord[1] >= 0:
-        if coord[0] > 0:
-            print('rechtsboven')
-            return output
-        print('linksboven')
-        return output[0], 90-output[1]
+    # Accept both (x, y) as well as x, y
+    if len(args) == 1:
+        coord = args[0]
     else:
-##        if coord[0] > 0:
-##            print('rechtsonder')
-##            return output[0], 270-output[1]
-##        print('linksonder')
+        coord = args
+
+    # Calculate the r (distance) and phi (angle) 
+    distance = sqrt(coord[0] ** 2 + coord[1] ** 2)
+    angle = degrees(atan(coord[0] / coord[1]))
+    output = distance, angle
+
+    # Correct the angle for the four different quadrants
+    if coord[1] >= 0:
+        if coord[0] < 0:
+            return output[0], 90-output[1]
+    else:
         return output[0], 270-output[1]
-    
+    return output
 
 def main():
-
-    print(' 1,  1: '+str(cartesian_to_polar(1, 1))) # Dit moet 45 graden zijn
-    print('-1,  1: '+str(cartesian_to_polar(-1, 1))) # Dit 135 graden
-    print('-1, -1: '+str(cartesian_to_polar(-1, -1))) # Dit 225 graden
-    print(' 1, -1: '+str(cartesian_to_polar(1, -1))) # Dit 315 graden
+    pass
     
 ##    CNCShield = serial.Serial(PORT, 115200, timeout=1)
 ##    start_x = 0
