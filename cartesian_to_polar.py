@@ -1,7 +1,5 @@
 from math import atan, sqrt, degrees, sin
-#import serial
-
-#PORT = '/dev/ttyUSB0'
+import serial
 
 def cartesian_to_polar(*args):
     # Accept both (x, y) as well as x, y
@@ -23,10 +21,13 @@ def cartesian_to_polar(*args):
         return output[0], 270-output[1]
     return output
 
+def open_connection(port):
+    # /dev/ttyUSB0
+    cnc_shield = serial.Serial(port, 115200, timeout=1)
+
 def main():
     pass
-    
-##    CNCShield = serial.Serial(PORT, 115200, timeout=1)
+
 ##    start_x = 0
 ##    end_x = 100
 ##    step_x = 0.1
