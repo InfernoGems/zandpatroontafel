@@ -30,8 +30,6 @@ class Circle(Shape):
     def __init__(self, r, step_size = None, starting_points = None):
         if step_size is None:
             step_size = 1
-        else:
-            step_size = step_size
         super().__init__(starting_points)
         for a in arange(0, 360 + step_size, step_size):
             self._points.append((cos(a) * r, sin(a) * r))
