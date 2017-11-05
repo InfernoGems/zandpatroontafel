@@ -1,7 +1,7 @@
 def create_gcode(path):
-    gcode = 'G90 G16 G17\n'
+    gcode = 'G90\nG92 X1 Y0\n'
     for r, phi in path:
-        gcode += 'G01 X' + '{0:.20f}'.format(r) + ' Y' + '{0:.20f}'.format(phi) + '\n'
+        gcode += 'G90 G01 X' + '{0:.5f}'.format(r) + ' Y' + '{0:.5f}'.format(phi) + ' F100\n'
     return gcode
 
 def import_path(file):
@@ -14,4 +14,5 @@ def main():
     path = import_path('code.py')
     print(create_gcode(path))
 
-main()
+if __name__ == '__main__':
+    main()
