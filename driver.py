@@ -35,7 +35,6 @@ class Driver(Serial):
     def stop_driver(self):
         self.close()
         
-
 			
 def main():
     driver = Driver('/dev/ttyUSB0', ['code.py'], wait_time=.2)
