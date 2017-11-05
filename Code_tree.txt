@@ -1,0 +1,20 @@
+Raspberry Pi host een HTTP server waar iemand op kan (1 webpagina) met pincode beveiligd
+Daarop kan die een paar dingen doen:
+
+WACHTRIJ
+- Wachtrij bekijken van de plotopdrachten
+- In de wachtrij opdrachten verplaatsen van plek
+- Opdracht aan de wachtrij toevoegen uit lijst
+- Opdracht verwijderen uit de wachtrij
+
+BIBLIOTHEEK
+- Hierin zitten opdrachten die toegevoegd kunnen worden aan de wachtrij
+- Voeg een opdracht toe
+- Verwijder een opdracht
+
+SCRIPTS
+- /cartesian_to_polar.py
+- /shapes.py
+- /main.py
+- /tasks/task1.txt
+
