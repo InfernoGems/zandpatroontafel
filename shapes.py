@@ -8,7 +8,7 @@ class Shape(object):
             self._points = starting_points
         else:
             self._points = []
-
+# test
     def add_point(self, point):
         self._points.append(point)
 
