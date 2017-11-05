@@ -1,5 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from threading import Thread
+from . import driver
 
 HOST = 'localhost'
 PORT = 80
@@ -8,6 +10,7 @@ SETTINGS_FILE = 'settings.json'
 with open(SETTINGS_FILE) as f:
     settings = json.loads(f.read())
 queue = []
+d = driver.Driver('path')
 
 
 def handle_json(json_data):
@@ -33,7 +36,10 @@ def handle_json(json_data):
             queue[index], queue[index + 1] = queue[index + 1], queue[index]
 
         elif json_data['action'] == 'kill_current':
-            pass
+            d.stop = True
+            t = Thread(target = d.start)
+            t.daemon = True
+            t.start()
 
         elif json_data['action'] == 'delete_from_library':
             del settings['library'][settings['library'].index(json_data['filename'])]
@@ -70,6 +76,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         pass
 
 def main():
+    t = Thread(target = d.start)
+    t.daemon = True
+    t.start()
     server = HTTPServer((HOST, PORT), RequestHandler)
     server.serve_forever()
     with open(SETTINGS_FILE, 'w') as f:
