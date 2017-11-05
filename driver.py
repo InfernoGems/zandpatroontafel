@@ -1,5 +1,5 @@
 from serial import Serial
-from . import read_code
+import read_code
 
 class Driver(Serial):
     def __init__(self, port, queue):

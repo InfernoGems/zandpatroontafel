@@ -1,7 +1,6 @@
-import json
+import json, driver
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
-from . import driver
 
 HOST = 'localhost'
 PORT = 80
@@ -21,28 +20,37 @@ def handle_json(json_data):
         if json_data['action'] == 'upload':
             pass
 
+        elif json_data['action'] == 'get_library':
+            return settings['library']
+
         elif json_data['action'] == 'add_to_queue':
             queue.append(json_data['filename']) #Filename is not checked yet
+            return {'status': 'success'}
 
         elif json_data['action'] == 'delete_from_queue':
             queue.remove(json_data['filename'])
+            return {'status': 'success'}
 
         elif json_data['action'] == 'move_up':
             index = queue.index(json_data['filename'])
             queue[index], queue[index - 1] = queue[index - 1], queue[index]
+            return {'status': 'success'}
 
         elif json_data['action']== 'move_down':
             index = queue.index(json_data['filename'])
             queue[index], queue[index + 1] = queue[index + 1], queue[index]
+            return {'status': 'success'}
 
         elif json_data['action'] == 'kill_current':
             d.stop = True
             t = Thread(target = d.start)
             t.daemon = True
             t.start()
+            return {'status': 'success'}
 
         elif json_data['action'] == 'delete_from_library':
             del settings['library'][settings['library'].index(json_data['filename'])]
+            return {'status': 'success'}
 
     except KeyError:
         pass
