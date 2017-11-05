@@ -1,7 +1,7 @@
 def create_gcode(path):
     gcode = 'G90 G16 G17\n'
     for r, phi in path:
-        gcode += 'G01 X' + '{0:.20f}'.format(r) + ' Y' + '{0:.20f}'.format(phi) + '\n'#'G01 X{0:f} Y{0:f}'.format(r, phi) + '\n'
+        gcode += 'G01 X' + '{0:.20f}'.format(r) + ' Y' + '{0:.20f}'.format(phi) + '\n'
     return gcode
 
 def import_path(file):
