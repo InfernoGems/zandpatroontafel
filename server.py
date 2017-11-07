@@ -7,7 +7,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 import json
 
-HOST = 'localhost'
+HOST = '192.168.2.47'
 PORT = 80
 PIN = '0000'
 SETTINGS_FILE = 'settings.json'
