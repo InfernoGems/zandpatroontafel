@@ -1,6 +1,11 @@
-import json, driver
+try:
+    import driver
+except ImportError:
+    pass
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
+import json
 
 HOST = 'localhost'
 PORT = 80
@@ -9,7 +14,7 @@ SETTINGS_FILE = 'settings.json'
 with open(SETTINGS_FILE) as f:
     settings = json.loads(f.read())
 queue = []
-d = driver.Driver('path')
+#d = driver.Driver('path')
 
 
 def handle_json(json_data):
@@ -49,7 +54,10 @@ def handle_json(json_data):
             return {'status': 'success'}
 
         elif json_data['action'] == 'delete_from_library':
-            del settings['library'][settings['library'].index(json_data['filename'])]
+            try:
+                del settings['library'][settings['library'].index(json_data['filename'])]
+            except ValueError:
+                return {'status': 'This file does not exist in our library. '}
             return {'status': 'success'}
 
     except KeyError:
@@ -84,11 +92,14 @@ class RequestHandler(BaseHTTPRequestHandler):
         pass
 
 def main():
-    t = Thread(target = d.start)
-    t.daemon = True
-    t.start()
-    server = HTTPServer((HOST, PORT), RequestHandler)
-    server.serve_forever()
+    #t = Thread(target = d.start)
+    #t.daemon = True
+    #t.start()
+    try:
+        server = HTTPServer((HOST, PORT), RequestHandler)
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
     with open(SETTINGS_FILE, 'w') as f:
         f.write(json.dumps(settings))
 
