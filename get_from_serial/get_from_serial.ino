@@ -12,9 +12,11 @@ void loop() {
     Serial.print("received p: ");
     Serial.println(p);
     float r_float = r.toFloat();
-    Serial.println(r_float);
+    float p_float = p.toFloat();
+    r_float = r_float +  p_float;
+    Serial.println(r_float, 4);
   }
-  
-  
-  
+
+
+
 }

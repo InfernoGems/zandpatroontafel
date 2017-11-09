@@ -20,8 +20,15 @@ boolean finished = true;
 // Get the delta phi and delta r from the raspberry and convert that to pulses
 void get_target() {
   // GET THE delta PHI AND delta R FROM THE RASPBERRY PI
-  float target_phi = 10.0;
-  float target_r = 10.0;
+  String input_r = Serial.readStringUntil('&');
+  String input_phi = Serial.readStringUntil('&');
+  Serial.print("received r: ");
+  Serial.println(input_r);
+  Serial.print("received phi: ");
+  Serial.println(input_phi);
+  
+  float target_phi = input_phi.toFloat();
+  float target_r = input_r.toFloat();
 
   // Compensate the target_r for the rotation of phi
   target_r -= target_phi * phi_compensation;
@@ -62,6 +69,7 @@ void goto_target() {
     digitalWrite(pin_r_step, LOW);
     delayMicroseconds(pulse_delay);
   }
+  finished = true;
 }
 
 void setup() {
@@ -73,10 +81,12 @@ void setup() {
 }
 
 void loop() {
-  if (Serial.available() > 0) {
-    get_target();
+  if (finished) {
+    if (Serial.available() > 0) {
+      get_target();
+    }
+  } else {
+    goto_target();
   }
-  
-  goto_target();
   
 }
