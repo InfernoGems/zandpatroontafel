@@ -5,35 +5,51 @@ const int pin_r_step = 3;
 const int pin_r_dir = 6;
 
 const int pulse_amount = 200;
-const int phi_compensation = 10;
-
+const float phi_compensation = 0.25;
 
 const int pulse_width = 200;
 const int pulse_time = 100000;
 const int pulse_delay = pulse_time - pulse_width;
 
-float target_phi = -0.05;
-float target_r = 0.0;
+int target_phi_pulse = 0;
+int target_r_pulse = 0;
 
-int target_phi_pulse = abs(target_phi * pulse_amount);
-int target_r_pulse = abs((target_r * pulse_amount) - (target_phi_pulse / phi_compensation));
-
+boolean get_target = true;
 
 void setup() {
+  Serial.begin(115200);
   pinMode(pin_phi_step, OUTPUT); 
   pinMode(pin_phi_dir, OUTPUT);
   pinMode(pin_r_step, OUTPUT); 
   pinMode(pin_r_dir, OUTPUT);
-  
-  if (target_phi > 0) {
-    digitalWrite(pin_phi_dir, HIGH);
-  } else if (target_phi < 0) {
-    digitalWrite(pin_phi_dir, LOW);
-  }
-  if (target_r > 0) {
-    digitalWrite(pin_r_dir, HIGH);
-  } else if (target_r < 0) {
-    digitalWrite(pin_r_dir, LOW);
+}
+
+void loop() {
+  if (get_target) {
+    float target_phi = 0.0;
+    float target_r = 10.0;
+    
+    // Compensate the target_r for the rotation of phi
+    target_r -= target_phi * phi_compensation;
+    
+    // Calculate the pulses
+    target_phi_pulse = abs(target_phi * pulse_amount);
+    target_r_pulse = abs(target_r * pulse_amount);
+    
+    // Set direction of phi
+    if (target_phi > 0) {
+      digitalWrite(pin_phi_dir, HIGH);
+    } else if (target_phi < 0) {
+      digitalWrite(pin_phi_dir, LOW);
+    }
+    
+    // Set direction of r
+    if (target_r > 0) {
+      digitalWrite(pin_r_dir, HIGH);
+    } else if (target_r < 0) {
+      digitalWrite(pin_r_dir, LOW);
+    }
+    get_target = false;
   }
   
   for (int i = 0; i < target_phi_pulse; i++) {
@@ -49,9 +65,6 @@ void setup() {
     digitalWrite(pin_r_step, LOW);
     delayMicroseconds(pulse_delay);
   }
-}
-
-void loop() {
-  
+  delay(1000);
   
 }
