@@ -49,10 +49,6 @@ void get_target() {
 // Let the motors go to the desired position
 void goto_target() {
   
-  String test = Serial.readString();
-  
-  Serial.print(test);
-  
   for (int i = 0; i < target_phi_pulse; i++) {
     digitalWrite(pin_phi_step, HIGH);
     delayMicroseconds(pulse_width);
@@ -77,7 +73,7 @@ void setup() {
 }
 
 void loop() {
-  if (finished) {
+  if (Serial.available() > 0) {
     get_target();
   }
   
