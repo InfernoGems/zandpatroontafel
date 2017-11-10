@@ -1,35 +1,55 @@
 from serial import Serial
 from time import sleep
+import importlib
 import read_code
 
 
 class Driver(Serial):
-    def __init__(self, port, queue, wait_time=None):
+    PULSE_WIDTH = 200
+    PULSE_TIME = 100000
+    R_GEAR = 2
+    PHI_GEAR = 3
+    R_MICROSTEPPING = 8
+    PHI_MICROSTEPPING = 8
+    R_PULSES_PER_REVOLUTION = 200 * R_MICROSTEPPING * R_GEAR
+    PHI_PULSES_PER_REVOLUTION = 200 * PHI_MICROSTEPPING * PHI_GEAR
+    OK = 'OK'
+    
+    def __init__(self, port, queue):
         super().__init__(port, 115200, timeout=1)
         self.stop = False
         self.queue = queue
         self.current = None
-        self.wait_time = wait_time
-        if wait_time is None:
-            self.wait_time = .1
-    
+        self.phi_absolute = 0
+        self.r_absolute = 0
+
+    def send_relative(self, r, phi):
+        r, phi = round(r, 6), round(phi, 6)
+        print(r, phi)
+        command = '{r}&{phi}&'.format(r = r, phi = phi)
+        self.write(command.encode())
+        while True:
+            output = self.readline().decode().strip()
+            if output == self.OK:
+                break
+        self.phi_absolute += phi
+        self.r_absolute += r
+
+    def send_absolute(self, r_absolute, phi_absolute):
+        self.send_relative(r_absolute - self.r_absolute, phi_absolute - self.phi_absolute)
+        
+         
     def start(self):
-        self.write(b'\r\n\r\n')
-        sleep(2)
-        self.flushInput()
         while True:
             if self.queue:
                 file = self.queue[0]
                 del self.queue[0]
-                g_code = read_code.create_gcode(read_code.import_path(file))
-                self.current = g_code
-                for line in g_code.split('\n'):
-                    print(line)
-                    if self.stop:
-                        break
-                    self.write(line.encode() + b'\n')
-                    self.readline()
-                    sleep(self.wait_time)
+                self.current = file
+                module = importlib.import_module(file.rstrip('.py').replace('/', '.'))
+                for r, phi in module.path:
+                    self.send_absolute(r, phi)
+                    sleep(.1)
+                
                     
 
     def stop_driver(self):
@@ -37,7 +57,7 @@ class Driver(Serial):
         
 			
 def main():
-    driver = Driver('/dev/ttyUSB0', ['code.py'], wait_time=.2)
+    driver = Driver('/dev/ttyUSB0', ['Patterns/code.py'])
     try:
         driver.start()
     except KeyboardInterrupt:
