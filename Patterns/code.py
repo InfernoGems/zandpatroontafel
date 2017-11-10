@@ -1,4 +1,6 @@
 from math import sin
+from numpy import arange
+
 path = []
-for phi in range(100):
-	path.append((sin(phi/100)*10 + 1, phi/100))
+for t in arange(0, 1, 0.000625):
+	path.append((t, t))

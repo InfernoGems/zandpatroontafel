@@ -4,16 +4,16 @@ const int pin_phi_dir = 5; // Direction: toggle (positive / negative)
 const int pin_r_step = 3;
 const int pin_r_dir = 6;
 
-const int pulse_amount = 400; // Amount of pulses per revolution
-const float phi_compensation = 0.25; // Compensation factor for r when phi gets changed
+// Define default values
+int r_pulses_per_revolution = 200*8*2;
+int phi_pulses_per_revolution = 200*8*3;
+const float phi_compensation = 0; // Compensation factor for r when phi gets changed
+int pulse_width = 200;
+long int pulse_time = 100000;
+int pulse_delay = pulse_time - pulse_width;
 
-// Define pulse speed
-const int pulse_width = 200;
-const int pulse_time = 100000;
-const int pulse_delay = pulse_time - pulse_width;
-
-int target_phi_pulse = 0;
-int target_r_pulse = 0;
+int phi_pulse_target = 0;
+int r_pulse_target = 0;
 
 boolean finished = true;
 
@@ -22,32 +22,28 @@ void get_target() {
   // GET THE delta PHI AND delta R FROM THE RASPBERRY PI
   String input_r = Serial.readStringUntil('&');
   String input_phi = Serial.readStringUntil('&');
-  Serial.print("received r: ");
-  Serial.println(input_r);
-  Serial.print("received phi: ");
-  Serial.println(input_phi);
   
-  float target_phi = input_phi.toFloat();
-  float target_r = input_r.toFloat();
+  float phi_target = input_phi.toFloat();
+  float r_target = input_r.toFloat();
 
   // Compensate the target_r for the rotation of phi
-  target_r -= target_phi * phi_compensation;
+  r_target -= phi_target * phi_compensation;
   
   // Calculate the pulses
-  target_phi_pulse = abs(target_phi * pulse_amount);
-  target_r_pulse = abs(target_r * pulse_amount);
+  phi_pulse_target = abs(phi_target * phi_pulses_per_revolution);
+  r_pulse_target = abs(r_target * r_pulses_per_revolution);
   
   // Set direction of phi
-  if (target_phi > 0) {
+  if (phi_target > 0) {
     digitalWrite(pin_phi_dir, HIGH);
-  } else if (target_phi < 0) {
+  } else if (phi_target < 0) {
     digitalWrite(pin_phi_dir, LOW);
   }
   
   // Set direction of r
-  if (target_r > 0) {
+  if (r_target > 0) {
     digitalWrite(pin_r_dir, HIGH);
-  } else if (target_r < 0) {
+  } else if (r_target < 0) {
     digitalWrite(pin_r_dir, LOW);
   }
   finished = false;
@@ -56,14 +52,14 @@ void get_target() {
 // Let the motors go to the desired position
 void goto_target() {
   
-  for (int i = 0; i < target_phi_pulse; i++) {
+  for (int i = 0; i < phi_pulse_target; i++) {
     digitalWrite(pin_phi_step, HIGH);
     delayMicroseconds(pulse_width);
     digitalWrite(pin_phi_step, LOW);
     delayMicroseconds(pulse_delay);
   }
   
-  for (int i = 0; i < target_r_pulse; i++) {
+  for (int i = 0; i < r_pulse_target; i++) {
     digitalWrite(pin_r_step, HIGH);
     delayMicroseconds(pulse_width);
     digitalWrite(pin_r_step, LOW);
@@ -71,16 +67,16 @@ void goto_target() {
   }
   finished = true;
   Serial.println("OK");
-  Serial.println(target_r_pulse);
-  Serial.println(target_phi_pulse);
 }
 
 void setup() {
   Serial.begin(115200);
+  Serial.flush();
   pinMode(pin_phi_step, OUTPUT); 
   pinMode(pin_phi_dir, OUTPUT);
   pinMode(pin_r_step, OUTPUT); 
   pinMode(pin_r_dir, OUTPUT);
+  Serial.write("OK");
 }
 
 void loop() {
@@ -91,5 +87,4 @@ void loop() {
   } else {
     goto_target();
   }
-  
 }
