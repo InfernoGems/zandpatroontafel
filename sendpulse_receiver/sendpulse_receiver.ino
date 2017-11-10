@@ -4,7 +4,7 @@ const int pin_phi_dir = 5; // Direction: toggle (positive / negative)
 const int pin_r_step = 3;
 const int pin_r_dir = 6;
 
-const int pulse_amount = 200; // Amount of pulses per revolution
+const int pulse_amount = 400; // Amount of pulses per revolution
 const float phi_compensation = 0.25; // Compensation factor for r when phi gets changed
 
 // Define pulse speed
@@ -70,6 +70,9 @@ void goto_target() {
     delayMicroseconds(pulse_delay);
   }
   finished = true;
+  Serial.println("OK");
+  Serial.println(target_r_pulse);
+  Serial.println(target_phi_pulse);
 }
 
 void setup() {
