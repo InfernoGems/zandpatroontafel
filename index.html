@@ -22,7 +22,11 @@
 
 			<!-- Queue -->
 			<div class="w3-third w3-container">
-				<h2>Wachtrij</h2>
+
+				<div class="w3-display-container">
+					<h2>Nu bezig</h2>
+					<span title="Voeg een bestand toe aan de bibliotheek" onclick="" class="w3-button w3-ripple w3-hover-flat-wet-asphalt w3-display-right"><i class="fa fa-pause w3-large"></i></span>
+				</div>
 				<ul class="w3-ul w3-flat-wet-asphalt w3-card w3-section">
 					
 					<li class="w3-display-container w3-border-flat-midnight-blue">Beautiful_sin.py
@@ -33,20 +37,17 @@
 			
 			<!-- Library -->
 			<div class="w3-third w3-container">
-				<div class="w3-display-container" style="margin:0px;">
+				<div class="w3-display-container">
 					<h2>Bibliotheek</h2>
-					<span title="Voeg een bestand toe aan de bibliotheek" onclick="choose_file();" class="w3-button w3-ripple w3-hover-flat-wet-asphalt w3-display-right"><i class="fa fa-upload w3-xlarge"></i></span>
-					<div style="height:0px;overflow:hidden">
-						<input type="file" id="file_upload" name="file_upload"></input>
-					</div>
-
-					
+					<span title="Voeg een patroon toe aan de bibliotheek" onclick="choose_file();" class="w3-button w3-ripple w3-hover-flat-wet-asphalt w3-display-right"><i class="fa fa-plus w3-large"></i></span>
 				</div>
 				
 				
 				
 				<ul id="id_library" class="w3-ul w3-flat-wet-asphalt w3-card w3-section"></ul>
-
+				<div style="height:0px;overflow:hidden;">
+					<input type="file" id="file_upload" name="file_upload"></input>
+				</div>
 			</div>
 			
 			<!-- Help and about -->
@@ -67,6 +68,7 @@
 					De bibliotheek bevat alle opgeslagen patronen.
 					
 					<ul>
+						<li></li><br>
 						<li>Klik op de naam van een patroon om de code te bekijken. </li><br>
 						<li>Klik op het <i class="fa fa-play"></i>-icoon naast de naam van het patroon om deze toe te voegen aan de wachtrij.</li><br>
 						<li>Klik op het <i class="fa fa-trash"></i>-icoon om het patroon te verwijderen uit de bibliotheek.</li>

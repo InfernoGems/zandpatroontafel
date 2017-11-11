@@ -48,13 +48,19 @@ class Driver(Serial):
                 module = importlib.import_module(file.rstrip('.py').replace('/', '.'))
                 for r, phi in module.path:
                     self.send_absolute(r, phi)
-                    sleep(.1)
-                
-                    
+
 
     def stop_driver(self):
         self.close()
         
+
+class DummyDriver(Driver):
+    def write(self, data):
+        print(data)
+
+    def readline(self):
+        return b'OK'
+
 			
 def main():
     driver = Driver('/dev/ttyUSB0', ['Patterns/code.py'])
