@@ -1,4 +1,4 @@
-var pin = prompt('Geef je pincode op');
+var pin = '0000'; //prompt('Geef je pincode op');
 
 function communicate(method, json, callback){
 	var request = new XMLHttpRequest();
@@ -43,7 +43,7 @@ function choose_file() {
 
 
 // Set the HTML template for the list items in the library
-var library_item = '<li class="w3-display-container w3-border-flat-midnight-blue">{0}<span title="Verwijder patroon uit bibliotheek" onclick="delete_pattern({1});" class="w3-button w3-ripple w3-display-right w3-hover-red"><i class="fa fa-trash w3-large"></i></span><span title="Voeg patroon toe aan wachtrij" onclick="add_to_queue({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:46px;"><i class="fa fa-play w3-large"></i></span></li>';
+var library_item = '<li class="w3-display-container w3-border-flat-midnight-blue">{0}<span title="Verwijder patroon uit bibliotheek" onclick="delete_pattern({1});" class="w3-button w3-ripple w3-display-right w3-hover-red"><i class="fa fa-trash w3-large"></i></span><span title="Voeg patroon toe aan wachtrij" onclick="add_to_queue({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:46px;"><i class="fa fa-play w3-large"></i></span><span title="Bekijk code" onclick="view_code({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:92px;"><i class="fa fa-code w3-large"></i></span></li>';
 
 // Set the HTML template for the list items in the queue
 var queue_item = '';
@@ -72,7 +72,7 @@ function load_library() {
 		var library = JSON.parse(r.responseText)['library'];
 		for (i = 0; i < library.length; i++) {
 			var output_html = library_item.replace("{0}", library[i]);
-			for (a = 0; a < 2; a++) {
+			for (a = 0; a < 3; a++) {
 				output_html = output_html.replace("{1}", "'"+ library[i] +"'");
 			}
 			
@@ -80,12 +80,32 @@ function load_library() {
 
 			div.innerHTML = output_html;
 			div.id = library[i];
+			div.setAttribute("code_shown", "false");
 
 			document.getElementById("id_library").appendChild(div);
 		}
 
 	});
 }
+
+
+// View code of pattern inside of the library
+function view_code(pattern) {
+	var div = document.getElementById(pattern);
+	if (div.getAttribute("code_shown") == "true") {
+		code_div = div.childNodes[1];
+		div.removeChild(code_div);
+		div.setAttribute("code_shown", "false");
+	} else {
+		var code_div = document.createElement("div");
+		code_div.innerHTML = '<li class="w3-flat-midnight-blue">' + '</li>'
+		code_div.id = 'view_code';
+		div.appendChild(code_div);
+		div.setAttribute("code_shown", "true");
+	}
+	
+	
+};
 
 
 // Delete the pattern from the library
