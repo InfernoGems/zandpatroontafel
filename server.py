@@ -4,7 +4,7 @@ from threading import Thread
 from shutil import move
 import json, os, base64
 
-HOST = 'localhost'
+HOST = '192.168.0.150'
 PORT = 80
 PIN = '0000'
 
@@ -14,6 +14,7 @@ queue = []
 
 
 def handle_json(json_data):
+    print(json_data)
     try:
         if json_data['pin'] != PIN:
             return {'status': 'failed', 'message': 'Incorrect pin. '}
@@ -27,8 +28,11 @@ def handle_json(json_data):
             return {'status': 'success'}
 
         elif json_data['action'] == 'get_file':
-        	with open('Patterns/' + json_data['filename']) as f:
-        		return {'status': 'success', 'file': base64.b64encode(f.read())}
+            try:
+                with open('Patterns/' + json_data['filename'], 'rb') as f:
+                    return {'status': 'success', 'file_data': base64.b64encode(f.read()).decode()}
+            except FileNotFoundError:
+                return {'status': 'failed', 'message': 'Dit bestand is niet meer beschikbaar. '}
 
         elif json_data['action'] == 'get_library':
             return {'status': 'success', 'library': load_library()}
@@ -60,7 +64,7 @@ def handle_json(json_data):
 
         elif json_data['action'] == 'delete_from_library':
             if not os.path.exists('Patterns/' + json_data['filename']):
-                return {'status': 'failed', 'message': 'This file is not in our library. '}
+                return {'status': 'failed', 'message': 'Dit bestand bestaat niet (meer).  '}
             move('Patterns/' + json_data['filename'], 'Wastebin/' + json_data['filename'])
             return {'status': 'success'}
 

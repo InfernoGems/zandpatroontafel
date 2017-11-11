@@ -43,21 +43,23 @@ function choose_file() {
 
 
 // Set the HTML template for the list items in the library
-var library_item = '<li class="w3-display-container w3-border-flat-midnight-blue">{0}<span title="Verwijder patroon uit bibliotheek" onclick="delete_pattern({1});" class="w3-button w3-ripple w3-display-right w3-hover-red"><i class="fa fa-trash w3-large"></i></span><span title="Voeg patroon toe aan wachtrij" onclick="add_to_queue({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:46px;"><i class="fa fa-play w3-large"></i></span><span title="Bekijk code" onclick="view_code({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:92px;"><i class="fa fa-code w3-large"></i></span></li>';
+var library_item = '<li class="w3-display-container w3-border-flat-midnight-blue">{0}<span title="Verwijder patroon uit bibliotheek" onclick="delete_pattern({1});" class="w3-button w3-ripple w3-display-right w3-hover-red"><i class="fa fa-trash w3-large"></i></span><span title="Voeg patroon toe aan wachtrij" onclick="add_to_queue({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:46px;"><i class="fa fa-play w3-large"></i></span><span title="Bekijk code" onclick="get_file({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:92px;"><i class="fa fa-code w3-large"></i></span></li>';
 
 // Set the HTML template for the list items in the queue
 var queue_item = '';
 
 
-function get_file(v, filename){
+function get_file(filename){
 	communicate('POST', {pin: pin, action: 'get_file', filename: filename}, function(r){
 		var text = r.responseText;
 		var json = JSON.parse(text);
+		console.log(json);
 		if (json['status'] != 'success'){
 			alert(json['message']);
 			return;
 		}
-		v = atob(json['file_data'])
+		file_data = atob(json['file_data']);
+		alert(file_data);
 	});
 }
 
@@ -87,25 +89,6 @@ function load_library() {
 
 	});
 }
-
-
-// View code of pattern inside of the library
-function view_code(pattern) {
-	var div = document.getElementById(pattern);
-	if (div.getAttribute("code_shown") == "true") {
-		code_div = div.childNodes[1];
-		div.removeChild(code_div);
-		div.setAttribute("code_shown", "false");
-	} else {
-		var code_div = document.createElement("div");
-		code_div.innerHTML = '<li class="w3-flat-midnight-blue">' + '</li>'
-		code_div.id = 'view_code';
-		div.appendChild(code_div);
-		div.setAttribute("code_shown", "true");
-	}
-	
-	
-};
 
 
 // Delete the pattern from the library
