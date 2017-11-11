@@ -7,6 +7,13 @@ function request_setup() {
 	request.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
 }
 
+// Choose file
+function choose_file() {
+	var upload_button = document.getElementById("file_upload");
+	upload_button.click();
+	console.log(upload_button['upload_button'].files)
+}
+
 // Get contents of the library
 request_setup();
 request.send(JSON.stringify({pin: pin, action: 'get_library'}));
