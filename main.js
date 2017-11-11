@@ -1,4 +1,4 @@
-var pin = '0000';
+var pin = prompt('Geef je pincode op');
 
 function communicate(method, json, callback){
 	var request = new XMLHttpRequest();
@@ -29,7 +29,7 @@ window.onload = function(){
 				if (status != 'success'){
 					alert(json['message']);
 				}
-				location.reload();
+				load_library();
 			});
 		}
 		reader.readAsText(file);
@@ -51,6 +51,10 @@ var queue_item = '';
 
 // Populate the library with list items
 function load_library() {
+	var id_library = document.getElementById('id_library');
+	while (id_library.hasChildNodes()){
+		id_library.removeChild(id_library.childNodes[0]);
+	}
 	communicate('POST', {pin: pin, action: 'get_library'}, function(r){
 		var library = JSON.parse(r.responseText)['library'];
 		for (i = 0; i < library.length; i++) {
