@@ -49,6 +49,19 @@ var library_item = '<li class="w3-display-container w3-border-flat-midnight-blue
 var queue_item = '';
 
 
+function get_file(v, filename){
+	communicate('POST', {pin: pin, action: 'get_file', filename: filename}, function(r){
+		var text = r.responseText;
+		var json = JSON.parse(text);
+		if (json['status'] != 'success'){
+			alert(json['message']);
+			return;
+		}
+		v = atob(json['file_data'])
+	});
+}
+
+
 // Populate the library with list items
 function load_library() {
 	var id_library = document.getElementById('id_library');
