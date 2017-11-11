@@ -100,8 +100,6 @@ def main():
         server.serve_forever()
     except KeyboardInterrupt:
         pass
-    with open(SETTINGS_FILE, 'w') as f:
-        f.write(json.dumps(settings))
 
 if __name__ == '__main__':
     main()
