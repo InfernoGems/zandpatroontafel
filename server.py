@@ -1,14 +1,10 @@
-try:
-    import driver
-except ImportError:
-    pass
-
+#import driver
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 from shutil import move
 import json, os, base64
 
-HOST = '192.168.0.150'
+HOST = 'localhost'
 PORT = 80
 PIN = '0000'
 
@@ -29,6 +25,10 @@ def handle_json(json_data):
             with open('Patterns/' + json_data['filename'], 'wb') as f:
                 f.write(file_data)
             return {'status': 'success'}
+
+        elif json_data['action'] == 'get_file':
+        	with open('Patterns/' + json_data['filename']) as f:
+        		return {'status': 'success', 'file': base64.b64encode(f.read())}
 
         elif json_data['action'] == 'get_library':
             return {'status': 'success', 'library': load_library()}
@@ -95,9 +95,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         pass
 
 def main():
-    #t = Thread(target = d.start)
-    #t.daemon = True
-    #t.start()
+##    t = Thread(target = d.start)
+##    t.daemon = True
+##    t.start()
     try:
         server = HTTPServer((HOST, PORT), RequestHandler)
         server.serve_forever()
