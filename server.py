@@ -6,13 +6,13 @@ except ImportError:
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 from shutil import move
-import json, os
+import json, os, base64
 
-HOST = 'localhost'
+HOST = '192.168.0.150'
 PORT = 80
 PIN = '0000'
 
-library = os.listdir('Patterns')
+load_library = lambda: os.listdir('Patterns')
 queue = []
 #d = driver.Driver('path')
 
@@ -23,10 +23,15 @@ def handle_json(json_data):
             return {'status': 'failed', 'message': 'Incorrect pin. '}
 
         if json_data['action'] == 'upload':
-            pass
+            if not json_data['filename'].endswith('.py'):
+                return {'status': 'failed', 'message': 'Dit bestandstype wordt niet ondersteund. '}
+            file_data = base64.b64decode(json_data['file_data'])
+            with open('Patterns/' + json_data['filename'], 'wb') as f:
+                f.write(file_data)
+            return {'status': 'success'}
 
         elif json_data['action'] == 'get_library':
-            return {'status': 'success', 'library': library}
+            return {'status': 'success', 'library': load_library()}
 
         elif json_data['action'] == 'add_to_queue':
             queue.append(json_data['filename']) #Filename is not checked yet
@@ -66,11 +71,10 @@ def handle_json(json_data):
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         file = self.path
-        if file.endswith('/'):
-            file += 'index.html'
-        file = file.lstrip('/')
+        if file == '/':
+            file = 'index.html'
         try:
-            with open(file, 'rb') as f:
+            with open(file.split('/')[-1], 'rb') as f:
                 self.send_response(200)
                 self.send_header('Content-type', 'text/' + file.split('/')[-1].split('.')[-1])
                 self.end_headers()
@@ -81,7 +85,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         data_string = self.rfile.read(int(self.headers['Content-Length']))
-        print(data_string)
         json_data = json.loads(data_string.decode())
         self.send_response(200)
         self.send_header('Content-type', 'application/json')

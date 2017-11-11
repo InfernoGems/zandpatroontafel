@@ -7,11 +7,36 @@ function request_setup() {
 	request.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
 }
 
-// Choose file
+
+window.onload = function(){
+	var file_input = document.getElementById('file_upload');
+	file_input.addEventListener('change', function(e) {
+		var file = file_input.files[0];
+		var reader = new FileReader();
+		reader.onload = function(e){
+			var file_data = btoa(reader.result);
+			request_setup();
+			request.send(JSON.stringify({pin: pin, action: 'upload', file_data: file_data, filename: file.name}));
+			request.onreadystatechange = function(){
+				if (request.readyState == XMLHttpRequest.DONE) {
+					var text = request.responseText;
+					var json = JSON.parse(text);
+					var status = json['status'];
+					if (status != 'success'){
+						alert(json['message']);
+					}
+
+					location.reload();
+				}
+			}
+		}
+		reader.readAsText(file);
+	});
+}
+
 function choose_file() {
-	var upload_button = document.getElementById("file_upload");
-	upload_button.click();
-	console.log(upload_button['upload_button'].files)
+	var upload_div = document.getElementById('file_upload');
+	upload_div.click();
 }
 
 // Get contents of the library
@@ -20,7 +45,7 @@ request.send(JSON.stringify({pin: pin, action: 'get_library'}));
 request.onreadystatechange = function(){
 	if (request.readyState == XMLHttpRequest.DONE) {
 		var text = request.responseText;
-		library_list = JSON.parse(text);
+		library_list = JSON.parse(text)['library'];
 		load_library();
 	}
 }
