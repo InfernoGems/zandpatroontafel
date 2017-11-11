@@ -5,14 +5,14 @@ except ImportError:
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
-import json
+from shutil import move
+import json, os
 
-HOST = '192.168.2.47'
+HOST = 'localhost'
 PORT = 80
 PIN = '0000'
-SETTINGS_FILE = 'settings.json'
-with open(SETTINGS_FILE) as f:
-    settings = json.loads(f.read())
+
+library = os.listdir('Patterns')
 queue = []
 #d = driver.Driver('path')
 
@@ -26,7 +26,7 @@ def handle_json(json_data):
             pass
 
         elif json_data['action'] == 'get_library':
-            return settings['library']
+            return {'status': 'success', 'library': library}
 
         elif json_data['action'] == 'add_to_queue':
             queue.append(json_data['filename']) #Filename is not checked yet
@@ -54,10 +54,9 @@ def handle_json(json_data):
             return {'status': 'success'}
 
         elif json_data['action'] == 'delete_from_library':
-            try:
-                del settings['library'][settings['library'].index(json_data['filename'])]
-            except ValueError:
-                return {'status': 'This file does not exist in our library. '}
+            if not os.path.exists('Patterns/' + json_data['filename']):
+                return {'status': 'failed', 'message': 'This file is not in our library. '}
+            move('Patterns/' + json_data['filename'], 'Wastebin/' + json_data['filename'])
             return {'status': 'success'}
 
     except KeyError:
@@ -82,6 +81,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         data_string = self.rfile.read(int(self.headers['Content-Length']))
+        print(data_string)
         json_data = json.loads(data_string.decode())
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
