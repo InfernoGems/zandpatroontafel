@@ -43,10 +43,34 @@ function choose_file() {
 
 
 // Set the HTML template for the list items in the library
-var library_item = '<li class="w3-display-container w3-border-flat-midnight-blue">{0}<span title="Verwijder patroon uit bibliotheek" onclick="delete_pattern({1});" class="w3-button w3-ripple w3-display-right w3-hover-red"><i class="fa fa-trash w3-large"></i></span><span title="Voeg patroon toe aan wachtrij" onclick="add_to_queue({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:46px;"><i class="fa fa-play w3-large"></i></span><span title="Bekijk code" onclick="view_code({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:92px;"><i class="fa fa-code w3-large"></i></span></li>';
+/*
+var library_item = '<li class="w3-display-container w3-border-flat-midnight-blue">{0}<span title="Verwijder patroon uit bibliotheek" onclick="delete_pattern({1});" class="w3-button w3-ripple w3-display-right w3-hover-red"><i class="fa fa-trash w3-large"></i></span><span title="Voeg patroon toe aan wachtrij" onclick="add_to_queue({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:46px;"><i class="fa fa-play w3-large"></i></span><span title="Bekijk code" onclick="view_code({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:92px;"><i class="fa fa-code w3-large"></i></span><span title="Opties" onclick="library_show_options({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue" style="margin-right:138px;"><i class="fa fa-ellipsis-h w3-large"></i></span></li>';
+*/
+
+var library_item = '<li class="w3-display-container w3-border-flat-midnight-blue">{0}<span title="Opties" onclick="library_show_options({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue"><i class="fa fa-caret-down w3-large"></i></span></li>';
 
 // Set the HTML template for the list items in the queue
 var queue_item = '';
+
+
+function library_show_options(pattern) {
+	var div = document.getElementById(pattern);
+
+	if (div.getAttribute("options_shown") == "true") {
+		div.childNodes[0].childNodes[1].childNodes[0].setAttribute("class", "fa fa-caret-down w3-large");
+		var options_div = div.childNodes[1];
+		div.removeChild(options_div);
+		div.setAttribute("options_shown", "false");
+	} else {
+		div.childNodes[0].childNodes[1].childNodes[0].setAttribute("class", "fa fa-caret-up w3-large");
+		var div_options = document.createElement("div");
+		div_options.setAttribute("class", "w3-flat-midnight-blue");
+		div_options.innerHTML = '<span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-flat-wet-asphalt" style="width:100%; text-align:left;"><i class="fa fa-play w3-large" style="width:20px; margin-right:8px;"></i> Voeg toe aan wachtrij</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-flat-wet-asphalt" style="width:100%; text-align:left;"><i class="fa fa-code w3-large" style="width:20px; margin-right:8px;"></i> Bekijk code</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-flat-wet-asphalt" style="width:100%; text-align:left;"><i class="fa fa-download w3-large" style="width:20px; margin-right:8px;"></i> Download</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-flat-wet-asphalt" style="width:100%; text-align:left;"><i class="fa fa-trash w3-large" style="width:20px; margin-right:8px;"></i> In prullenbak</span>';
+		div.appendChild(div_options);
+		div.setAttribute("options_shown", "true");
+	}
+	
+}
 
 
 function get_file(filename){
@@ -62,7 +86,6 @@ function get_file(filename){
 		var div = document.getElementById(filename);
 		var code_div = document.createElement("div");
 		code_div.innerHTML = '<li><pre><code>' +file_data+ '</code></pre></li>'
-		code_div.id = 'view_code';
 		div.appendChild(code_div);
 		div.setAttribute("code_shown", "true");
 		hljs.highlightBlock(code_div);
@@ -80,7 +103,7 @@ function load_library() {
 		var library = JSON.parse(r.responseText)['library'];
 		for (i = 0; i < library.length; i++) {
 			var output_html = library_item.replace("{0}", library[i]);
-			for (a = 0; a < 3; a++) {
+			for (a = 0; a < 4; a++) {
 				output_html = output_html.replace("{1}", "'"+ library[i] +"'");
 			}
 			
@@ -89,6 +112,7 @@ function load_library() {
 			div.innerHTML = output_html;
 			div.id = library[i];
 			div.setAttribute("code_shown", "false");
+			div.setAttribute("options_shown", "false");
 
 			document.getElementById("id_library").appendChild(div);
 		}
