@@ -1,4 +1,4 @@
-var pin = prompt('Geef je pincode op');
+var pin = '0000'; //prompt('Geef je pincode op');
 
 function communicate(method, json, callback){
 	var request = new XMLHttpRequest();
