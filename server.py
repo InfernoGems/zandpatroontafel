@@ -1,16 +1,15 @@
-#import driver
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 from shutil import move
-import json, os, base64
+import json, os, base64, driver
 
-HOST = '192.168.0.150'
+HOST = 'localhost'
 PORT = 80
 PIN = '0000'
 
 load_library = lambda: os.listdir('Patterns')
 queue = []
-#d = driver.Driver('path')
+d = driver.DummyDriver(queue)
 
 
 def handle_json(json_data):
@@ -99,9 +98,9 @@ class RequestHandler(BaseHTTPRequestHandler):
         pass
 
 def main():
-##    t = Thread(target = d.start)
-##    t.daemon = True
-##    t.start()
+    t = Thread(target = d.start)
+    t.daemon = True
+    t.start()
     try:
         server = HTTPServer((HOST, PORT), RequestHandler)
         server.serve_forever()
