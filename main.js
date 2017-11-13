@@ -42,43 +42,57 @@ function choose_file() {
 }
 
 
-var html_library_item = '<li class="w3-display-container w3-border-flat-midnight-blue">{0}<span title="Opties" onclick="library_show_options({1});" class="w3-button w3-ripple w3-display-right w3-hover-flat-midnight-blue"><i class="fa fa-caret-down w3-large"></i></span></li>';
+var html_library_item = '<li class="w3-display-container w3-border-0">{0}<span id="button_{0}" onclick="library_show_options({1});" class="w3-button w3-ripple w3-display-right w3-hover-light-grey"><i class="fa fa-caret-down w3-large"></i></span></li>';
 
-var html_library_options = '<span onclick="add_to_queue({1});" class="w3-button w3-ripple w3-hover-flat-wet-asphalt" style="width:100%; text-align:left;"><i class="fa fa-play w3-large" style="width:20px; margin-right:8px;"></i> Voeg toe aan wachtrij</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-flat-wet-asphalt" style="width:100%; text-align:left;"><i class="fa fa-code w3-large" style="width:20px; margin-right:8px;"></i> Bekijk code</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-flat-wet-asphalt" style="width:100%; text-align:left;"><i class="fa fa-download w3-large" style="width:20px; margin-right:8px;"></i> Download</span><br><span onclick="delete_pattern({1});" class="w3-button w3-ripple w3-hover-flat-wet-asphalt" style="width:100%; text-align:left;"><i class="fa fa-trash w3-large" style="width:20px; margin-right:8px;"></i> In prullenbak</span>';
+var html_library_options = '<span onclick="add_to_queue({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-play w3-large" style="width:20px; margin-right:8px;"></i> Voeg toe aan wachtrij</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-code w3-large" style="width:20px; margin-right:8px;"></i> Bekijk code</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-download w3-large" style="width:20px; margin-right:8px;"></i> Download</span><br><span onclick="delete_pattern({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-trash w3-large" style="width:20px; margin-right:8px;"></i> In prullenbak</span>';
 
 
 // Set the HTML template for the list items in the queue
 var queue_item = '';
 
 
+function close_other_options(excluded_pattern) {
+	var div = document.getElementById("id_library");
+	for (i=0; i<div.childNodes.length; i++) {
+		var div_element = div.childNodes[i];
+		if (div_element.id != excluded_pattern) {
+			div_element.setAttribute("options_shown", "false");
+			var button_element = document.getElementById("button_"+div_element.id);
+			button_element.setAttribute("class", "w3-button w3-ripple w3-display-right w3-hover-light-grey");
+			button_element.innerHTML = '<i class="fa fa-caret-down w3-large"></i>';
+
+			var div_options = div_element.childNodes[1];
+			if (div_options != null) {
+				div_element.removeChild(div_options);
+			}
+		}
+
+	}
+}
+
+
 function library_show_options(pattern) {
 	var div = document.getElementById(pattern);
 
 	if (div.getAttribute("options_shown") == "true") {
-		div.childNodes[0].childNodes[1].setAttribute("class", "w3-button w3-ripple w3-hover-flat-wet-asphalt w3-display-right");
+		div.childNodes[0].childNodes[1].setAttribute("class", "w3-button w3-ripple w3-hover-light-grey w3-display-right");
 		div.childNodes[0].childNodes[1].childNodes[0].setAttribute("class", "fa fa-caret-down w3-large");
 		var options_div = div.childNodes[1];
 		div.removeChild(options_div);
 		div.setAttribute("options_shown", "false");
 	} else {
-		var options_list = document.getElementById("options_list");
-		if (options_list != null) {
-			options_list.parentNode.setAttribute("options_shown", "false");
-			options_list.parentNode.childNodes[1].setAttribute("class", "w3-button w3-ripple w3-hover-flat-midnight-blue w3-display-right");
-			options_list.parentNode.childNodes[1].childNodes[0].setAttribute("class", "fa fa-caret-down w3-large");
-			options_list.parentNode.removeChild(options_list);
-		}
-		//
+		
+		close_other_options(pattern);
 
-		div.childNodes[0].childNodes[1].setAttribute("class", "w3-button w3-ripple w3-hover-flat-wet-asphalt w3-display-right w3-flat-midnight-blue");
+		div.childNodes[0].childNodes[1].setAttribute("class", "w3-button w3-ripple w3-hover-light-grey w3-display-right w3-light-grey");
 		div.childNodes[0].childNodes[1].childNodes[0].setAttribute("class", "fa fa-caret-up w3-large");
 		var div_options = document.createElement("div");
-		div_options.setAttribute("class", "w3-flat-midnight-blue");
+		div_options.setAttribute("class", "w3-light-grey");
 		
 		var output_html = html_library_options;
-			for (a = 0; a < 4; a++) {
-				output_html = output_html.replace("{1}", "'"+ pattern +"'");
-			}
+		for (a = 0; a < 4; a++) {
+			output_html = output_html.replace("{1}", "'"+ pattern +"'");
+		}
 		div_options.innerHTML = output_html;
 		div_options.id = "options_list";
 		div.appendChild(div_options);
@@ -88,7 +102,7 @@ function library_show_options(pattern) {
 }
 
 
-function get_file(filename){
+function get_file_contents(filename){
 	communicate('POST', {pin: pin, action: 'get_file', filename: filename}, function(r){
 		var text = r.responseText;
 		var json = JSON.parse(text);
@@ -100,9 +114,7 @@ function get_file(filename){
 		file_data = atob(json['file_data']);
 		var div = document.getElementById(filename);
 		var code_div = document.createElement("div");
-		code_div.innerHTML = '<li><pre><code>' +file_data+ '</code></pre></li>'
-		div.appendChild(code_div);
-		div.setAttribute("code_shown", "true");
+		
 		hljs.highlightBlock(code_div);
 	});
 }
@@ -117,9 +129,9 @@ function load_library() {
 	communicate('POST', {pin: pin, action: 'get_library'}, function(r){
 		var library = JSON.parse(r.responseText)['library'];
 		for (i = 0; i < library.length; i++) {
-			var output_html = html_library_item.replace("{0}", library[i]);
+			var output_html = html_library_item;
 			for (a = 0; a < 4; a++) {
-				output_html = output_html.replace("{1}", "'"+ library[i] +"'");
+				output_html = output_html.replace("{1}", "'"+ library[i] +"'").replace("{0}", library[i]);
 			}
 			
 			var div = document.createElement("div");
@@ -137,27 +149,28 @@ function load_library() {
 
 // View code of pattern inside of the library
 function view_code(pattern) {
-	var div = document.getElementById(pattern);
-	if (div.getAttribute("code_shown") == "true") {
-		var code_div = div.childNodes[1];
-		div.removeChild(code_div);
-		div.setAttribute("code_shown", "false");
-	} else {
-		get_file(pattern);
-		
-	}
+	get_file_contents(pattern);
+	document.getElementById('code_modal').style.display='block'
 
 	
 };
 
+function modal_close(modal_id) {
+	document.getElementById(modal_id).style.display='none';
+}
+
+
 // Delete the pattern from the library
 function delete_pattern(pattern) {
 	// Confirmation dialog
-	if (!confirm('Weet je zeker dat je het patroon '+' wil verwijderen? ')) {
+
+	var div = document.getElementById(pattern);
+
+	if (!confirm('Weet je zeker dat je het patroon '+div.id+' wil verwijderen? ')) {
 		return;
 	}
 
-	var div = document.getElementById(pattern);
+	
 	div.parentNode.removeChild(div);
 
 	communicate('POST', {pin: pin, action: 'delete_from_library', filename: pattern}, function(r){
