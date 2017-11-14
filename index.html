@@ -6,14 +6,29 @@
 		<title>Zandpatroontafel</title>
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		
 		<link rel="stylesheet" href="androidstudio.css">
 		<script src="highlight.pack.js"></script>
 		<script src="main.js"></script>
 
 	</head>
 	
-	<body class="w3-blue-grey">
+	<div id="code_modal" class="w3-modal">
+		<div class="w3-modal-content">
+			<div class="w3-container w3-blue"> 
+				<div style="margin-top:8px; margin-bottom:8px;">code.py</div>
+				<span onclick="modal_close('code_modal');" class="w3-button w3-ripple w3-display-topright w3-hover-blue">
+					<i class="fa fa-times w3-large"></i>
+				</span>
+
+			</div>
+
+			<div id="code_modal_content" class="w3-container w3-white">
+			</div>
+			
+		</div>
+	</div>
+
+	<body class="w3-blue">
 		
 		
 
@@ -21,31 +36,28 @@
 
 			<!-- Queue -->
 			<div class="w3-half w3-container">
-				
-			
-			</div>
-			
-			<div id="code_modal" class="w3-modal">
-				<div class="w3-modal-content">
-					<div class="w3-container w3-blue-grey"> 
-						<div style="margin-top:8px; margin-bottom:8px;">code.py</div>
-						<span onclick="modal_close('code_modal');" class="w3-button w3-ripple w3-display-topright w3-hover-blue-grey">
-							<i class="fa fa-times w3-large"></i>
-						</span>
-					</div>
-					<div id="code_modal_content" class="w3-container w3-white">
-						
-					</div>
+
+
+				<div class="w3-display-container">
+					<h2>Wachtrij</h2>
 					
 				</div>
+			
+				<ul id="id_queue" class="w3-ul w3-white w3-card w3-section">
+					
+					
+				</ul>
+
 			</div>
+			
+			
 
 			<!-- Library -->
 			<div class="w3-half w3-container">
 				
 				<div class="w3-display-container">
 					<h2>Bibliotheek</h2>
-					<span onclick="choose_file();" class="w3-button w3-ripple w3-hover-blue-grey w3-display-right"><i class="fa fa-upload w3-large"></i></span>
+					<span onclick="upload_file();" class="w3-button w3-ripple w3-hover-blue w3-display-right"><i class="fa fa-upload w3-large"></i></span>
 				</div>
 				
 				

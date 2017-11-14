@@ -8,7 +8,7 @@ PORT = 80
 PIN = '0000'
 
 load_library = lambda: os.listdir('Patterns')
-queue = []
+queue = ['code.py']
 d = driver.DummyDriver(queue)
 
 
@@ -35,6 +35,9 @@ def handle_json(json_data):
 
         elif json_data['action'] == 'get_library':
             return {'status': 'success', 'library': load_library()}
+
+        elif json_data['action'] == 'get_queue':
+            return {'status': 'success', 'queue': ['kweewee.py', 'penis_dicks.py', 'dickiedick.py', 'sloppy_code.py']}
 
         elif json_data['action'] == 'add_to_queue':
             queue.append(json_data['filename']) #Filename is not checked yet
