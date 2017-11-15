@@ -18,7 +18,7 @@ function initialize(){
 	load_queue();
 }
 
-
+// TEST
 window.onload = function(){
 	initialize();
 	var file_input = document.getElementById('file_upload');
