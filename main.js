@@ -1,3 +1,5 @@
+// TESTING THE ATOM EDITOR
+
 var pin = '0000'; //prompt('Geef je pincode op');
 
 function communicate(method, json, callback){
@@ -63,12 +65,10 @@ function get_file_contents(filename){
 			return;
 		}
 		file_data = atob(json['file_data']);
-		
+
 		var div = document.getElementById(filename);
 		var code_div = document.createElement("div");
-		
+
 		hljs.highlightBlock(code_div);
 	});
 }
-
-
