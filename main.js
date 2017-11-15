@@ -13,9 +13,14 @@ function communicate(method, json, callback){
 }
 
 
-window.onload = function(){
+function initialize(){
 	load_library();
 	load_queue();
+}
+
+
+window.onload = function(){
+	initialize();
 	var file_input = document.getElementById('file_upload');
 	file_input.addEventListener('change', function(e) {
 		var file = file_input.files[0];
@@ -27,8 +32,7 @@ window.onload = function(){
 				if (json['status'] != 'success'){
 					alert(json['message']);
 				}
-				load_library();
-				load_queue();
+				initialize();
 			});
 		}
 		reader.readAsText(file);
@@ -45,7 +49,6 @@ function upload_file() {
 var html_library_item = '<li class="w3-display-container w3-border-0">{0}<span id="button_{0}" onclick="library_toggle_options({1});" class="w3-button w3-ripple w3-display-right w3-hover-light-grey"><i class="fa fa-caret-down w3-large"></i></span></li>';
 
 var html_library_options = '<span onclick="add_to_queue({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-play w3-large" style="width:20px; margin-right:8px;"></i> Voeg toe aan wachtrij</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-code w3-large" style="width:20px; margin-right:8px;"></i> Bekijk code</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-download w3-large" style="width:20px; margin-right:8px;"></i> Download</span><br><span onclick="delete_pattern({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-trash w3-large" style="width:20px; margin-right:8px;"></i> In prullenbak</span>';
-
 
 // Set the HTML template for the list items in the queue
 var html_queue_item = '<li class="w3-display-container w3-border-0">{0}<span onclick="remove_queue_item(this);" class="w3-button w3-ripple w3-display-right w3-hover-light-grey"><i class="fa fa-times w3-large"></i></span><span onclick="move_up_in_queue(this);" class="w3-button w3-ripple w3-display-right w3-hover-light-grey" style="margin-right:48px;"><i class="fa fa-level-up w3-large"></i></span></li>';
@@ -72,6 +75,14 @@ function close_other_options(excluded_pattern) {
 		}
 
 	}
+}
+
+
+function replace_all(string, a, b){
+	while (string.includes(a)){
+		string = string.replace(a, b);
+	}
+	return string;
 }
 
 
@@ -104,10 +115,7 @@ function library_toggle_options(pattern) {
 		div_options.setAttribute("class", "w3-light-grey");
 		
 		// Set the target for the functions inside the options <div> element
-		var output_html = html_library_options;
-		for (var a = 0; a < 4; a++) {
-			output_html = output_html.replace("{1}", "'"+ pattern +"'");
-		}
+		var output_html = replace_all(html_library_options, '{1}', "'" + pattern + "'");
 
 		div_options.innerHTML = output_html;
 		div_options.id = "options_list";
@@ -141,17 +149,15 @@ function get_file_contents(filename){
 // Populate the library with list items
 function load_library() {
 	var id_library = document.getElementById('id_library');
+
 	while (id_library.hasChildNodes()){
 		id_library.removeChild(id_library.childNodes[0]);
 	}
+
 	communicate('POST', {pin: pin, action: 'get_library'}, function(r){
 		var library = JSON.parse(r.responseText)['library'];
 		for (i = 0; i < library.length; i++) {
-			var output_html = html_library_item;
-			for (a = 0; a < 4; a++) {
-				output_html = output_html.replace("{1}", "'"+ library[i] +"'").replace("{0}", library[i]);
-			}
-			
+			var output_html = replace_all(replace_all(html_library_item, '{1}', "'" + library[i] + "'"), '{0}', library[i])
 			var div = document.createElement("div");
 
 			div.innerHTML = output_html;
@@ -169,18 +175,15 @@ function load_library() {
 
 function load_queue() {
 	var id_queue = document.getElementById('id_queue');
+
 	while (id_queue.hasChildNodes()){
 		id_queue.removeChild(id_queue.childNodes[0]);
 	}
+
 	communicate('POST', {pin: pin, action: 'get_queue'}, function(r){
 		queue = JSON.parse(r.responseText)['queue'];
-		console.log(queue);
 		for (i = 0; i < queue.length; i++) {
-			var output_html = html_queue_item;
-			for (a = 0; a < 4; a++) {
-				output_html = output_html.replace("{1}", "'"+ queue[i] +"'").replace("{0}", queue[i]);
-			}
-			
+			var output_html = replace_all(replace_all(html_queue_item, '{1}', "'" +  queue [i] + "'"), '{0}', queue[i])
 			var div = document.createElement("div");
 
 			div.innerHTML = output_html;
@@ -190,29 +193,28 @@ function load_queue() {
 	});
 }
 
+
 // View code of pattern inside of the library
 function view_code(pattern) {
 	get_file_contents(pattern);
-	document.getElementById('code_modal').style.display='block'
+	document.getElementById('code_modal').style.display = 'block';
 
 	
 };
 
 function modal_close(modal_id) {
-	document.getElementById(modal_id).style.display='none';
+	document.getElementById(modal_id).style.display = 'none';
 }
 
 
 // Delete the pattern from the library
 function delete_pattern(pattern) {
 	// Confirmation dialog
-
 	var div = document.getElementById(pattern);
 
-	if (!confirm('Weet je zeker dat je het patroon '+div.id+' wil verwijderen? ')) {
+	if (!confirm('Weet je zeker dat je het patroon ' + div.id + ' wil verwijderen? ')) {
 		return;
 	}
-
 	
 	div.parentNode.removeChild(div);
 
@@ -228,16 +230,13 @@ function delete_pattern(pattern) {
 
 function remove_queue_item(item) {
 	var div = item.parentNode.parentNode;
-
 	var i = 0;
 	var div_count = div;
-	while( (div_count = div_count.previousSibling) != null ) 
-	  i++;
+
+	while((div_count = div_count.previousSibling) != null) i++;
 	
 	queue.splice(i, 1);
-
 	div.parentNode.removeChild(div);
-
 }
 
 
@@ -250,11 +249,7 @@ function move_up_in_queue(item) {
 function add_to_queue(pattern) {
 	communicate('POST', {pin: pin, action: 'add_to_queue', filename: pattern}, function(r){});
 	
-	var output_html = html_queue_item;
-	for (a = 0; a < 4; a++) {
-		output_html = output_html.replace("{1}", "'"+ pattern +"'").replace("{0}", pattern);
-	}
-	
+	var output_html = replace_all(replace_all(html_queue_item, '{1}', "'" + pattern + "'"), "{0}", pattern);
 	var div = document.createElement("div");
 
 	div.innerHTML = output_html;
