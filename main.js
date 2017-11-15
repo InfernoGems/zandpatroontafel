@@ -1,4 +1,4 @@
-// TESTING THE ATOM EDITOR
+// TESTING AGAIN
 
 var pin = '0000'; //prompt('Geef je pincode op');
 
