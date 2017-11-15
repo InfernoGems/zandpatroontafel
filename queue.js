@@ -27,25 +27,26 @@ function remove_queue_item(item) {
 	var div_count = div;
 
 	while((div_count = div_count.previousSibling) != null) i++;
-	
+
 	queue.splice(i, 1);
+	send_queue();
 	div.parentNode.removeChild(div);
 }
 
 
 function send_queue(){
-	// TODO
+	communicate('POST', {pin: pin, action: 'send_queue', queue: queue}, function(r){});
 }
 
 
 function move_up_in_queue(item) {
 	alert(item.innerHTML);
+	send_queue();
 }
 
 
 // Add pattern to queue
 function add_to_queue(pattern) {
-	communicate('POST', {pin: pin, action: 'add_to_queue', filename: pattern}, function(r){});
 
 	var output_html = replace_all(replace_all(html_queue_item, '{1}', "'" + pattern + "'"), "{0}", pattern);
 	var div = document.createElement("div");
@@ -54,5 +55,6 @@ function add_to_queue(pattern) {
 	document.getElementById("id_queue").appendChild(div);
 
 	queue.push(pattern);
+	send_queue();
 
 }

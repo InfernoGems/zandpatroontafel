@@ -8,11 +8,13 @@ PORT = 80
 PIN = '0000'
 
 load_library = lambda: os.listdir('Patterns')
+global queue
 queue = ['code.py', 'test.py']
 d = driver.DummyDriver(queue)
 
 
 def handle_json(json_data):
+	global queue
 	print(json_data)
 	try:
 
@@ -47,7 +49,8 @@ def handle_json(json_data):
 
 		# Send the updated queue content back to the server
 		elif json_data['action'] == 'send_queue':
-			#queue = json_data['queue']
+			queue = json_data['queue']
+			print(queue)
 			return {'status': 'success'}
 
 		# Terminate the currently active pattern
