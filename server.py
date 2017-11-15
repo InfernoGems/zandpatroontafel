@@ -8,7 +8,7 @@ PORT = 80
 PIN = '0000'
 
 load_library = lambda: os.listdir('Patterns')
-queue = ['code.py']
+queue = ['code.py', 'test.py']
 d = driver.DummyDriver(queue)
 
 
@@ -43,20 +43,20 @@ def handle_json(json_data):
 
 		# Get queue contents
 		elif json_data['action'] == 'get_queue':
-			return {'status': 'success', 'queue': ['kweewee.py', 'penis_dicks.py', 'dickiedick.py', 'sloppy_code.py']}
+			return {'status': 'success', 'queue': queue}
 
 		# Send the updated queue content back to the server
-		elif json_data['action']== 'send_queue':
-			
+		elif json_data['action'] == 'send_queue':
+			#queue = json_data['queue']
 			return {'status': 'success'}
 
 		# Terminate the currently active pattern
-		elif json_data['action'] == 'kill_current':
-			d.stop = True
-			t = Thread(target = d.start)
-			t.daemon = True
-			t.start()
-			return {'status': 'success'}
+		# elif json_data['action'] == 'kill_current':
+		# 	d.stop = True
+		# 	t = Thread(target = d.start)
+		# 	t.daemon = True
+		# 	t.start()
+		# 	return {'status': 'success'}
 
 		# Delete pattern from library
 		elif json_data['action'] == 'delete_from_library':
@@ -96,9 +96,9 @@ class RequestHandler(BaseHTTPRequestHandler):
 		pass
 
 def main():
-	t = Thread(target = d.start)
-	t.daemon = True
-	t.start()
+	# t = Thread(target = d.start)
+	# t.daemon = True
+	# t.start()
 	try:
 		server = HTTPServer((HOST, PORT), RequestHandler)
 		server.serve_forever()
