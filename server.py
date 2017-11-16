@@ -9,7 +9,7 @@ PIN = '0000'
 
 load_library = lambda: os.listdir('Patterns')
 global queue
-queue = ['code.py', 'test.py']
+queue = []
 d = driver.DummyDriver(queue)
 
 

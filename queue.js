@@ -1,6 +1,17 @@
 // Set the HTML template for the list items in the queue
 const html_queue_item = '<li class="w3-display-container w3-border-0">{0}<span onclick="remove_queue_item(this);" class="w3-button w3-ripple w3-display-right w3-hover-light-grey"><i class="fa fa-times w3-large"></i></span><span onclick="move_up_in_queue(this);" class="w3-button w3-ripple w3-display-right w3-hover-light-grey" style="margin-right:48px;"><i class="fa fa-level-up w3-large"></i></span></li>';
 
+Array.prototype.move = function (old_index, new_index) {
+    if (new_index >= this.length) {
+        var k = new_index - this.length;
+        while ((k--) + 1) {
+            this.push(undefined);
+        }
+    }
+    this.splice(new_index, 0, this.splice(old_index, 1)[0]);
+    return this; // for testing purposes
+};
+
 function load_queue() {
 	var id_queue = document.getElementById('id_queue');
 
@@ -21,14 +32,17 @@ function load_queue() {
 	});
 }
 
-function remove_queue_item(item) {
-	var div = item.parentNode.parentNode;
+function get_item_index(div, item) {
 	var i = 0;
 	var div_count = div;
-
 	while((div_count = div_count.previousSibling) != null) i++;
+  return i;
+}
 
-	queue.splice(i, 1);
+function remove_queue_item(item) {
+  var div = item.parentNode.parentNode;
+
+	queue.splice(get_item_index(div, item), 1);
 	send_queue();
 	div.parentNode.removeChild(div);
 }
@@ -40,7 +54,13 @@ function send_queue(){
 
 
 function move_up_in_queue(item) {
-	alert(item.innerHTML);
+  var div = item.parentNode.parentNode;
+
+  var previous_index = get_item_index(div, item);
+  queue.move(previous_index, previous_index -1);
+
+  div.parentNode.insertBefore(div, div.parentNode.childNodes[previous_index-1]);
+
 	send_queue();
 }
 
