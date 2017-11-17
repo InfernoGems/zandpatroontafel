@@ -112,8 +112,23 @@ function close_other_options(excluded_pattern) {
 
 // View code of pattern inside of the library
 function view_code(pattern) {
-	get_file_contents(pattern);
-	document.getElementById('code_modal').style.display = 'block';
+	communicate('POST', {pin: pin, action: 'get_file', filename: pattern}, function(r){
+		var text = r.responseText;
+		var json = JSON.parse(text);
+		console.log(json);
+		if (json['status'] != 'success'){
+			alert(json['message']);
+			return;
+		}
+		file_data = atob(json['file_data']);
+
+		document.getElementById('code_modal').style.display = 'block';
+		
+		var code_div = document.getElementById('code_modal_content');
+		code_div.innerHTML = '<pre style="white-space: pre-wrap;"><code>'+file_data+'</code></pre>';
+
+		hljs.highlightBlock(code_div);
+	});
 
 	
 };

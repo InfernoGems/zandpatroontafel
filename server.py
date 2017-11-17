@@ -3,7 +3,7 @@ from threading import Thread
 from shutil import move
 import json, os, base64, driver
 
-HOST = '192.168.1.218'
+HOST = '172.17.117.42'
 PORT = 80
 PIN = '0000'
 
@@ -12,6 +12,7 @@ global queue
 queue = []
 d = driver.DummyDriver(queue)
 
+print('SERVER HOSTED ON: ' + str(HOST) + ':' + str(PORT))
 
 def handle_json(json_data):
 	global queue

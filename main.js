@@ -54,19 +54,5 @@ function replace_all(string, a, b){
 
 
 function get_file_contents(filename){
-	communicate('POST', {pin: pin, action: 'get_file', filename: filename}, function(r){
-		var text = r.responseText;
-		var json = JSON.parse(text);
-		console.log(json);
-		if (json['status'] != 'success'){
-			alert(json['message']);
-			return;
-		}
-		file_data = atob(json['file_data']);
-
-		var div = document.getElementById(filename);
-		var code_div = document.createElement("div");
-
-		hljs.highlightBlock(code_div);
-	});
+	
 }

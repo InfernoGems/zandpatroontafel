@@ -1,5 +1,5 @@
 // Set the HTML template for the list items in the queue
-const html_queue_item = '<li class="w3-display-container w3-border-0">{0}<span onclick="remove_queue_item(this);" class="w3-button w3-ripple w3-display-right w3-hover-light-grey"><i class="fa fa-times w3-large"></i></span><span onclick="move_up_in_queue(this);" class="w3-button w3-ripple w3-display-right w3-hover-light-grey" style="margin-right:48px;"><i class="fa fa-level-up w3-large"></i></span></li>';
+const html_queue_item = '<li name="{0}" class="w3-display-container w3-border-0">{0}<span onclick="remove_queue_item(this);" class="w3-button w3-ripple w3-display-right w3-hover-light-grey"><i class="fa fa-times w3-large"></i></span><span onclick="move_up_in_queue(this);" class="w3-button w3-ripple w3-display-right w3-hover-light-grey" style="margin-right:48px;"><i class="fa fa-level-up w3-large"></i></span></li>';
 
 Array.prototype.move = function (old_index, new_index) {
     if (new_index >= this.length) {
@@ -56,12 +56,20 @@ function send_queue(){
 function move_up_in_queue(item) {
   var div = item.parentNode.parentNode;
 
+
   var previous_index = get_item_index(div, item);
-  queue.move(previous_index, previous_index -1);
+  if (previous_index == 0) {
+    // Push pattern to be the currently executed pattern
+    if (!confirm('Weet je zeker dat je het patroon dat nu bezig is wil vervangen door code.py? ')) {
+      return;
+    }
+  } else {
+    queue.move(previous_index, previous_index -1);
 
-  div.parentNode.insertBefore(div, div.parentNode.childNodes[previous_index-1]);
+    div.parentNode.insertBefore(div, div.parentNode.childNodes[previous_index-1]);
 
-	send_queue();
+    send_queue();
+  }
 }
 
 
