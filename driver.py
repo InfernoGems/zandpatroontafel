@@ -41,14 +41,14 @@ class CurrentQueueItem(object):
 
 
 class Driver(Serial): 
-    #PULSE_WIDTH = 200
-    #PULSE_TIME = 100000
-    #R_GEAR = 2
-    #PHI_GEAR = 3
-    #R_MICROSTEPPING = 8
-    #PHI_MICROSTEPPING = 8
-    #R_PULSES_PER_REVOLUTION = 200 * R_MICROSTEPPING * R_GEAR
-    #PHI_PULSES_PER_REVOLUTION = 200 * PHI_MICROSTEPPING * PHI_GEAR
+    PULSE_WIDTH = 200
+    PULSE_TIME = 100000
+    R_GEAR = 2
+    PHI_GEAR = 30
+    R_MICROSTEPPING = 8
+    PHI_MICROSTEPPING = 8
+    R_PULSES_PER_REVOLUTION = 200 * R_MICROSTEPPING * R_GEAR
+    PHI_PULSES_PER_REVOLUTION = 200 * PHI_MICROSTEPPING * PHI_GEAR
     OK = 'OK'
     
     def __init__(self, port, queue):
@@ -61,8 +61,15 @@ class Driver(Serial):
         self._pause = False
 
     def send_relative(self, r, phi):
-        r, phi = round(r, 6), round(phi, 6)
-        command = '{r}&{phi}&'.format(r = r, phi = phi)
+        print(r, phi)
+        input_r = r * Driver.R_PULSES_PER_REVOLUTION
+        input_phi = phi * Driver.PHI_PULSES_PER_REVOLUTION
+
+        r_rounded = round(input_r)
+        phi_rounded = round(input_phi)
+
+        command = '{r}&{phi}&'.format(r = r_rounded, phi = phi_rounded)
+        print(command)
         self.write(command.encode())
         while True:
             output = self.readline().decode().strip()
@@ -83,14 +90,14 @@ class Driver(Serial):
                 module = importlib.import_module('Patterns.' + file.rstrip('.py'))
                 self.current = CurrentQueueItem(file, module.path)
                 for r, phi in module.path:
-		    if self.stop:
-			self.stop = False
-			break
+                    if self.stop:
+                        self.stop = False
+                        break
                     while self.pause:
                         pass
                     self.send_absolute(r, phi)
                     self.current.push()
-                    print(self.current)
+                    #print(r, phi)
                 self.current = None
                 sleep(2)
 

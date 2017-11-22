@@ -1,4 +1,4 @@
-var pin = '0000';//prompt('Geef je pincode op');
+var pin = '0000'// prompt('Geef je pincode op');
 var queue = [];
 var elapsed_time_holder = 0;
 var total_time_holder = 0;

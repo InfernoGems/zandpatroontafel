@@ -1,20 +1,20 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 from shutil import move
+from socket import gethostbyname, gethostname
 import json, os, base64, driver
 
-HOST = 'localhost'
+HOST = '172.17.117.153'
 PORT = 80
 PIN = '0000'
 
 load_library = lambda: [i for i in os.listdir('Patterns') if i.endswith('.py')]
 queue = []
-d = driver.DummyDriver(queue)
+d = driver.Driver('/dev/ttyUSB0', queue)
 
 print('SERVER HOSTED ON: ' + HOST + ':' + str(PORT))
 
 def handle_json(json_data):
-	print(json_data)
 	global queue
 	try:
 
@@ -102,7 +102,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 		if file == '/':
 			file = 'index.html'
 		fi = file.split('/')[-1]
-		print(file)
 		try:
 			if file.startswith('/Patterns/'):
 				with open('Patterns/' + fi, 'rb') as f: #This is to prevent path traversal
