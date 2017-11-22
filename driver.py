@@ -2,10 +2,34 @@ try:
     from serial import Serial
 except ImportError:
     Serial = object #This is for testing on windows. 
-from time import sleep
+from time import sleep, time
+from threading import Thread
 import importlib
 
-class Driver(Serial):
+
+class CurrentQueueItem(object):
+    def __init__(self, filename, path):
+        self.length = len(path) #The object should implement the __len__ method
+        self.filename = filename
+        self.done = 0
+        self.start_time = time()
+
+    def push(self):
+        self.done += 1
+
+    @property
+    def percentage(self):
+        return round(self.done/self.length * 100, 1)
+
+    @property
+    def time_left(self):
+        try:
+            return (time() - self.start_time) / self.done * (self.length - self.done)
+        except ZeroDivisionError:
+            return 0
+
+
+class Driver(Serial): 
     PULSE_WIDTH = 200
     PULSE_TIME = 100000
     R_GEAR = 2
@@ -44,10 +68,11 @@ class Driver(Serial):
             if self.queue:
                 file = self.queue[0]
                 del self.queue[0]
-                self.current = file
                 module = importlib.import_module(file.rstrip('.py').replace('/', '.'))
+                self.current = CurrentQueueItem(file, module.path)
                 for r, phi in module.path:
                     self.send_absolute(r, phi)
+                    self.current.push()
 
 
     def stop_driver(self):
@@ -64,6 +89,7 @@ class DummyDriver(Driver):
         
     def write(self, data):
         print(data.decode())
+        sleep(1)
 
     def readline(self):
         return b'OK'
@@ -71,7 +97,13 @@ class DummyDriver(Driver):
 			
 def main():
     driver = DummyDriver(['Patterns/code.py'])
-    driver.start()
+    Thread(target = driver.start).start()
+    while True:
+        try:
+            print(driver.current.percentage)
+            print(driver.current.time_left)
+        except AttributeError:
+            pass
     
 
 if __name__ == '__main__':

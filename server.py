@@ -8,14 +8,12 @@ PORT = 80
 PIN = '0000'
 
 load_library = lambda: os.listdir('Patterns')
-global queue
 queue = []
 d = driver.DummyDriver(queue)
 
-print('SERVER HOSTED ON: ' + str(HOST) + ':' + str(PORT))
+print('SERVER HOSTED ON: ' + HOST + ':' + str(PORT))
 
 def handle_json(json_data):
-	global queue
 	print(json_data)
 	try:
 
@@ -50,6 +48,7 @@ def handle_json(json_data):
 
 		# Send the updated queue content back to the server
 		elif json_data['action'] == 'send_queue':
+                        global queue
 			queue = json_data['queue']
 			print(queue)
 			return {'status': 'success'}
