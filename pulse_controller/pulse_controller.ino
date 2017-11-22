@@ -18,7 +18,6 @@ long int phi_target = 0;
 long int abs_r_target = 0;
 long int abs_phi_target = 0;
 
-
 int r_compensation_interval = 30;
 
 boolean finished = true;
@@ -64,8 +63,11 @@ void goto_target() {
       digitalWrite(pin_r_step, LOW);
       delayMicroseconds(r_pulse_delay);
     }
+    
     if (c > 0) {
-      c --;
+      if (abs_phi_target > 0) {
+        c --;
+      }
     } else {
       if (phi_target > 0) {
         digitalWrite(pin_r_dir, HIGH);

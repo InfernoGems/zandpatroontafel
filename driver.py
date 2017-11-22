@@ -6,7 +6,7 @@ from time import sleep, time
 from threading import Thread
 import importlib
 
-f = open("output_data.txt","w")
+#f = open("output_data.txt","w")
 
 class CurrentQueueItem(object):
     def __init__(self, filename, path):
@@ -65,7 +65,7 @@ class Driver(Serial):
         self.phi_lost = 0
 
     def send_relative(self, r, phi):
-        #print(r, phi)
+        print(r, phi)
         input_r = r * Driver.R_PULSES_PER_REVOLUTION + self.r_lost
         input_phi = phi * Driver.PHI_PULSES_PER_REVOLUTION + self.phi_lost
 
@@ -76,8 +76,8 @@ class Driver(Serial):
         self.phi_lost = input_phi - phi_rounded
 
         command = '{r}&{phi}&'.format(r = r_rounded, phi = phi_rounded)
-        f.write(str(r_rounded)+"\n")
-        print(r_rounded)
+        #f.write(str(r_rounded)+"\n")
+        print(command)
         self.write(command.encode())
         while True:
             output = self.readline().decode().strip()
@@ -115,8 +115,8 @@ class Driver(Serial):
 
     @pause.setter
     def pause(self, value):
-        f.close()
-        print("saved file")
+        #f.close()
+        #print("saved file")
         self._pause = value
         if self.current is not None:
             if value:
