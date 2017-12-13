@@ -72,6 +72,7 @@ class Driver(Serial):
                 self.current = CurrentQueueItem(file, module.path)
                 for r, phi in module.path:
                     self.send_absolute(r, phi)
+                    print(r, phi)
                     self.current.push()
 
 
@@ -95,16 +96,9 @@ class DummyDriver(Driver):
         return b'OK'
 
 			
-def main():
-    driver = DummyDriver(['Patterns/code.py'])
-    Thread(target = driver.start).start()
-    while True:
-        try:
-            print(driver.current.percentage)
-            print(driver.current.time_left)
-        except AttributeError:
-            pass
-    
-
+##def main():
+##    driver = Driver('/dev/ttyUSB0', ['Patterns/code.py'])
+##    driver.start()
+##    
 ##if __name__ == '__main__':
 ##    main()
