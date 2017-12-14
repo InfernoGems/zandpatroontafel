@@ -93,8 +93,8 @@ class RequestHandler(BaseHTTPRequestHandler):
 					self.end_headers()
 					self.wfile.write(f.read())
 		except FileNotFoundError:
-				self.send_response(404)
-				self.end_headers()
+			self.send_response(404)
+			self.end_headers()
 
 	def do_POST(self):
 		data_string = self.rfile.read(int(self.headers['Content-Length']))
