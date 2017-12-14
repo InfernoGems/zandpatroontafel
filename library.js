@@ -1,5 +1,12 @@
 const html_library_item = '<li class="w3-display-container w3-border-0">{0}<span id="button_{0}" onclick="library_toggle_options({1});" class="w3-button w3-ripple w3-display-right w3-hover-light-grey"><i class="fa fa-caret-down w3-large"></i></span></li>';
-const html_library_options = '<span onclick="add_to_queue({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-play w3-large" style="width:20px; margin-right:8px;"></i> Voeg toe aan wachtrij</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-code w3-large" style="width:20px; margin-right:8px;"></i> Bekijk code</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-download w3-large" style="width:20px; margin-right:8px;"></i> Download</span><br><span onclick="delete_pattern({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-trash w3-large" style="width:20px; margin-right:8px;"></i> In prullenbak</span>';
+const html_library_options = '<span onclick="add_to_queue({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-play w3-large" style="width:20px; margin-right:8px;"></i> Voeg toe aan wachtrij</span><br><span onclick="view_code({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-code w3-large" style="width:20px; margin-right:8px;"></i> Bekijk code</span><br><span onclick="download({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-download w3-large" style="width:20px; margin-right:8px;"></i> Download</span><br><span onclick="delete_pattern({1});" class="w3-button w3-ripple w3-hover-white" style="width:100%; text-align:left;"><i class="fa fa-trash w3-large" style="width:20px; margin-right:8px;"></i> In prullenbak</span>';
+
+
+
+//Download source code
+function download(pattern){
+	document.location = '/Patterns/' + pattern;
+}
 
 
 // Populate the library with list items

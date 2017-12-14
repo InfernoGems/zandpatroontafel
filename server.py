@@ -3,7 +3,7 @@ from threading import Thread
 from shutil import move
 import json, os, base64, driver
 
-HOST = '172.17.117.42'
+HOST = 'localhost'
 PORT = 80
 PIN = '0000'
 
@@ -15,6 +15,7 @@ print('SERVER HOSTED ON: ' + HOST + ':' + str(PORT))
 
 def handle_json(json_data):
 	print(json_data)
+	global queue
 	try:
 
 		#Check pin
@@ -48,7 +49,6 @@ def handle_json(json_data):
 
 		# Send the updated queue content back to the server
 		elif json_data['action'] == 'send_queue':
-                        global queue
 			queue = json_data['queue']
 			print(queue)
 			return {'status': 'success'}
@@ -77,15 +77,24 @@ class RequestHandler(BaseHTTPRequestHandler):
 		file = self.path
 		if file == '/':
 			file = 'index.html'
+		fi = file.split('/')[-1]
+		print(file)
 		try:
-			with open(file.split('/')[-1], 'rb') as f:
-				self.send_response(200)
-				self.send_header('Content-type', 'text/' + file.split('/')[-1].split('.')[-1])
-				self.end_headers()
-				self.wfile.write(f.read())
+			if file.startswith('/Patterns/'):
+				with open('Patterns/' + fi, 'rb') as f: #This is to prevent path traversal
+					self.send_response(200)
+					self.send_header('Content-type', 'application/octet-stream')
+					self.end_headers()
+					self.wfile.write(f.read())
+			else:
+				with open(fi, 'rb') as f:
+					self.send_response(200)
+					self.send_header('Content-type', 'text/' + file.split('/')[-1].split('.')[-1])
+					self.end_headers()
+					self.wfile.write(f.read())
 		except FileNotFoundError:
-			self.send_response(404)
-			self.end_headers()
+				self.send_response(404)
+				self.end_headers()
 
 	def do_POST(self):
 		data_string = self.rfile.read(int(self.headers['Content-Length']))
@@ -99,9 +108,9 @@ class RequestHandler(BaseHTTPRequestHandler):
 		pass
 
 def main():
-	# t = Thread(target = d.start)
-	# t.daemon = True
-	# t.start()
+	t = Thread(target = d.start)
+	t.daemon = True
+	t.start()
 	try:
 		server = HTTPServer((HOST, PORT), RequestHandler)
 		server.serve_forever()

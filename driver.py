@@ -19,7 +19,7 @@ class CurrentQueueItem(object):
 
     @property
     def percentage(self):
-        return round(self.done/self.length * 100, 1)
+        return round(self.done / self.length * 100, 1)
 
     @property
     def time_left(self):
