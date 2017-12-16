@@ -3,11 +3,11 @@ from threading import Thread
 from shutil import move
 import json, os, base64, driver
 
-HOST = 'localhost'
+HOST = '192.168.0.150'
 PORT = 80
 PIN = '0000'
 
-load_library = lambda: os.listdir('Patterns')
+load_library = lambda: [i for i in os.listdir('Patterns') if i.endswith('.py')]
 queue = []
 d = driver.DummyDriver(queue)
 
@@ -49,11 +49,20 @@ def handle_json(json_data):
 		
 		elif json_data['action'] == 'get_current':
 			if d.current is None:
-				return {'status': 'success', 'current_available': True, 'filename': 'Geen bestand bezig', 'percentage': 'Klaar', 'time_left': 0, 'passed_time': 0}
-			try:
-				pass
-			except:
-				pass
+				return {'status': 'success', 'current_available': False}
+			return {'status': 'success', 'current_available': True, 'filename': d.current.filename, 'percentage': d.current.percentage, 'time_left': d.current.time_left, 'elapsed_time': d.current.elapsed_time}
+
+
+		elif json_data['action'] == 'pause':
+			d.pause = True
+			return {'status': 'success'}
+
+		elif json_data['action'] == 'play':
+			d.pause = False
+			return {'status': 'success'}
+
+		elif json_data['action'] == 'get_paused':
+			return {'status': 'success', 'paused': d.pause}
 
 		# Send the updated queue content back to the server
 		elif json_data['action'] == 'send_queue':

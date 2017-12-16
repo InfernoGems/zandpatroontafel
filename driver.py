@@ -13,22 +13,27 @@ class CurrentQueueItem(object):
         self.filename = filename
         self.done = 0
         self.start_time = time()
+        self.pause_time = None
 
     def push(self):
         self.done += 1
 
     @property
-    def passed_time(self):
-        return time() - self.start_time
+    def elapsed_time(self):
+        #if self.pause_time is None:
+        #    sub = 0
+        #else:
+        #    sub = time() - self.pause_time
+        return round(time() - self.start_time)# - sub)
 
     @property
     def percentage(self):
-        return round(self.done / self.length * 100, 1)
+        return round(self.done / self.length * 100)
 
     @property
     def time_left(self):
         try:
-            return self.passed_time / self.done * (self.length - self.done)
+            return round(self.elapsed_time / self.done * (self.length - self.done))
         except ZeroDivisionError:
             return 0
 
@@ -54,6 +59,7 @@ class Driver(Serial):
         self.current = None
         self.phi_absolute = 0
         self.r_absolute = 0
+        self._pause = False
 
     def send_relative(self, r, phi):
         r, phi = round(r, 6), round(phi, 6)
@@ -78,11 +84,26 @@ class Driver(Serial):
                 module = importlib.import_module('Patterns.' + file.rstrip('.py'))
                 self.current = CurrentQueueItem(file, module.path)
                 for r, phi in module.path:
+                    while self.pause:
+                        pass
                     self.send_absolute(r, phi)
                     self.current.push()
                     print(self.current)
                 self.current = None
+                sleep(2)
 
+    @property
+    def pause(self):
+        return self._pause
+
+    @pause.setter
+    def pause(self, value):
+        self._pause = value
+        if self.current is not None:
+            if value:
+                self.current.pause_time = time()
+            else:
+                self.current.start_time += time() - self.current.pause_time
 
     def stop_driver(self):
         self.close()
@@ -95,10 +116,11 @@ class DummyDriver(Driver):
         self.current = None
         self.phi_absolute = 0
         self.r_absolute = 0
+        self.pause = False
         
     def write(self, data):
         print(data.decode())
-        sleep(1)
+        sleep(.1)
 
     def readline(self):
         return b'OK'

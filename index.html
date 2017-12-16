@@ -41,12 +41,22 @@
 				
 					<!-- Current pattern -->
 					<div class="w3-display-container">
-						<h2>Nu bezig</h2>
+						<div class="w3-display-container">
+							<h2>Nu bezig</h2>
+							<span onclick="switch_pause();" class="w3-button w3-ripple w3-hover-blue w3-display-right"><i id="pause_button" class="fa fa-pause w3-large"></i></span>
+						</div>
 					</div>
-				
-					<div id="id_current" class="w3-container w3-round w3-white w3-card w3-section w3-padding">
-						 <div class="w3-light-grey w3-round w3-xlarge">
-							  <div class="w3-container w3-round w3-blue" id="progress_bar" style="width:0%">0%</div>
+					
+
+					<div id="id_current" class="w3-container w3-white w3-card w3-section w3-padding">
+						<table class="w3-table" style="padding:0px;">
+							<tr>
+								<td style="padding:0px;"><h3 id="filename">...</h3></td>
+								<td style="padding:0px;"><p style="text-align:right;" id="progress_time">.../...s</p></td>
+							</tr>
+						</table>
+						 <div class="w3-light-grey w3-xlarge">
+							  <div class="w3-container w3-blue" id="progress_bar" style="width:0%;">0%</div>
 						</div> 
 						
 						<!--<li name="code.py" class="w3-display-container w3-border-0">code.py
