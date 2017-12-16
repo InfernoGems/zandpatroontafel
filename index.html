@@ -32,31 +32,46 @@
 
 	<body class="w3-blue">
 		
-		
 
 		<div class="w3-row">
 
-			<!-- Queue -->
-			<div class="w3-half w3-container">
-
-
-				<div class="w3-display-container">
-					<h2>Wachtrij</h2>
-					
-				</div>
-			
-				<ul id="id_queue" class="w3-ul w3-white w3-card w3-section">
-					
-					
-				</ul>
-
-			</div>
-			
-			
-
-			<!-- Library -->
-			<div class="w3-half w3-container">
+			<div class="w3-half">
 				
+				<div class="w3-container">
+				
+					<!-- Current pattern -->
+					<div class="w3-display-container">
+						<h2>Nu bezig</h2>
+					</div>
+				
+					<div id="id_current" class="w3-container w3-round w3-white w3-card w3-section w3-padding">
+						 <div class="w3-light-grey w3-round w3-xlarge">
+							  <div class="w3-container w3-round w3-blue" id="progress_bar" style="width:0%">0%</div>
+						</div> 
+						
+						<!--<li name="code.py" class="w3-display-container w3-border-0">code.py
+							<div id="progress" style="width: 100%; background-color: #ddd;">
+								<div id="progress_bar_percentage">30%</div>
+								<div id="progress_bar" style="width: 1%; height: 30px; background-color: #4CAF50; "></div>
+							</div>
+							<div id="time_left">Estimated time left: </div>
+						</li>-->				
+					</div>
+
+
+					<!-- Queue -->
+					<div class="w3-display-container">
+						<h2>Wachtrij</h2>
+					</div>
+				
+					<ul id="id_queue" class="w3-ul w3-white w3-card w3-section">
+					</ul>
+
+				
+
+				</div>
+			</div>
+			<div class="w3-half w3-container">
 				<div class="w3-display-container">
 					<h2>Bibliotheek</h2>
 					<span onclick="upload_file();" class="w3-button w3-ripple w3-hover-blue w3-display-right"><i class="fa fa-upload w3-large"></i></span>
@@ -68,6 +83,20 @@
 				<div style="height:0px;overflow:hidden;">
 					<input type="file" id="file_upload" name="file_upload"></input>
 				</div>
+			</div>
+		</div>
+		
+
+		<div class="w3-row">
+
+			
+			
+			
+
+			<!-- Library -->
+			<div class="w3-half w3-container">
+				
+				
 			</div>
 			
 			<!--

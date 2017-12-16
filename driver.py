@@ -18,15 +18,22 @@ class CurrentQueueItem(object):
         self.done += 1
 
     @property
+    def passed_time(self):
+        return time() - self.start_time
+
+    @property
     def percentage(self):
         return round(self.done / self.length * 100, 1)
 
     @property
     def time_left(self):
         try:
-            return (time() - self.start_time) / self.done * (self.length - self.done)
+            return self.passed_time / self.done * (self.length - self.done)
         except ZeroDivisionError:
             return 0
+
+    def __repr__(self):
+        return 'CurrentQueueItem(filename={}, start_time={}, done={}, percentage={}, time_left={})'.format(self.filename, self.start_time, self.done, self.percentage, self.time_left)
 
 
 class Driver(Serial): 
@@ -68,12 +75,13 @@ class Driver(Serial):
             if self.queue:
                 file = self.queue[0]
                 del self.queue[0]
-                module = importlib.import_module(file.rstrip('.py').replace('/', '.'))
+                module = importlib.import_module('Patterns.' + file.rstrip('.py'))
                 self.current = CurrentQueueItem(file, module.path)
                 for r, phi in module.path:
                     self.send_absolute(r, phi)
-                    print(r, phi)
                     self.current.push()
+                    print(self.current)
+                self.current = None
 
 
     def stop_driver(self):

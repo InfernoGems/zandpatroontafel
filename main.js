@@ -1,4 +1,4 @@
-var pin = '0000'; //prompt('Geef je pincode op');
+var pin = '0000';//prompt('Geef je pincode op');
 
 function communicate(method, json, callback){
 	var request = new XMLHttpRequest();
@@ -37,6 +37,7 @@ window.onload = function(){
 		}
 		reader.readAsText(file);
 	});
+	setInterval(function(){ update_current_pattern(); }, 1000);
 }
 
 

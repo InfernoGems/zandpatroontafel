@@ -12,6 +12,32 @@ Array.prototype.move = function (old_index, new_index) {
     return this; // for testing purposes
 };
 
+
+function update_current_pattern(){
+	communicate('POST', {pin: pin, action: 'get_current'}, function(r){
+		var elem = document.getElementById('progress_bar');
+		var json = JSON.parse(r.responseText);
+		if (!json['current_available']){return;}
+		var target = json['percentage'];
+		var current_width = elem.innerHTML.substring(0, elem.innerHTML.length - 1)
+		elem.innerHTML = target + "%";
+		setInterval(function(){
+			if (current_width < target) {
+				current_width ++;
+				elem.style.width = current_width + '%';
+				//elem.innerHTML = current_width + '%';
+			} else if (current_width > target) {
+				current_width = 0;
+				elem.style.width = "0%";
+				//elem.innerHTML = "0%";
+			}
+			
+		}, 10);
+
+	});
+}
+
+
 function load_queue() {
 	var id_queue = document.getElementById('id_queue');
 

@@ -46,11 +46,21 @@ def handle_json(json_data):
 		# Get queue contents
 		elif json_data['action'] == 'get_queue':
 			return {'status': 'success', 'queue': queue}
+		
+		elif json_data['action'] == 'get_current':
+			if d.current is None:
+				return {'status': 'success', 'current_available': True, 'filename': 'Geen bestand bezig', 'percentage': 'Klaar', 'time_left': 0, 'passed_time': 0}
+			try:
+				pass
+			except:
+				pass
 
 		# Send the updated queue content back to the server
 		elif json_data['action'] == 'send_queue':
-			queue = json_data['queue']
-			print(queue)
+			while queue:
+				del queue[0]
+			for q in json_data['queue']:
+				queue.append(q) #This is to keep the object and not overwrite it. The connection with driver.py will otherwise be lost
 			return {'status': 'success'}
 
 		# Terminate the currently active pattern
