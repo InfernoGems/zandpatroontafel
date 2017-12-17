@@ -3,7 +3,7 @@ from threading import Thread
 from shutil import move
 import json, os, base64, driver
 
-HOST = '192.168.0.150'
+HOST = '192.168.1.218'
 PORT = 80
 PIN = '0000'
 

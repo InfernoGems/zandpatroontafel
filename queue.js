@@ -25,6 +25,7 @@ function play(){
 
 
 function update_pause_icon(){
+
 	var button_div = document.getElementById("pause_button");
 	if (paused){
 		button_div.setAttribute("class", "fa fa-play w3-large");
@@ -34,14 +35,17 @@ function update_pause_icon(){
 }
 
 function switch_pause(){
-	if (paused){
-		play();
-		paused = false;
-		update_pause_icon();
-	} else {
-		pause();
-		paused = true;
-		update_pause_icon();
+	var elem = document.getElementById('progress_bar');
+	if (elem.innerHTML != "Klaar") {
+		if (paused){
+			play();
+			paused = false;
+			update_pause_icon();
+		} else {
+			pause();
+			paused = true;
+			update_pause_icon();
+		}
 	}
 }
 
