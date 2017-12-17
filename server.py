@@ -51,7 +51,12 @@ def handle_json(json_data):
 			if d.current is None:
 				return {'status': 'success', 'current_available': False}
 			return {'status': 'success', 'current_available': True, 'filename': d.current.filename, 'percentage': d.current.percentage, 'time_left': d.current.time_left, 'elapsed_time': d.current.elapsed_time}
-
+		
+		elif json_data['action'] == 'swap_current':
+			if d.pause:
+				d.pause = False
+			d.stop = True
+			return {'status': 'success'}
 
 		elif json_data['action'] == 'pause':
 			d.pause = True
