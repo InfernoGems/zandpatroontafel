@@ -133,6 +133,7 @@ function move_up_in_queue(item) {
     if (!confirm('Weet je zeker dat je het patroon dat nu bezig is wil vervangen door code.py? ')) {
       return;
     }
+    communicate('POST', {pin: pin, action: 'swap_current'}, function(r){});
   } else {
     queue.move(previous_index, previous_index -1);
 
