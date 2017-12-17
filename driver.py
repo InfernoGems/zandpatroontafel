@@ -41,14 +41,14 @@ class CurrentQueueItem(object):
 
 
 class Driver(Serial): 
-    PULSE_WIDTH = 200
-    PULSE_TIME = 100000
-    R_GEAR = 2
-    PHI_GEAR = 3
-    R_MICROSTEPPING = 8
-    PHI_MICROSTEPPING = 8
-    R_PULSES_PER_REVOLUTION = 200 * R_MICROSTEPPING * R_GEAR
-    PHI_PULSES_PER_REVOLUTION = 200 * PHI_MICROSTEPPING * PHI_GEAR
+    #PULSE_WIDTH = 200
+    #PULSE_TIME = 100000
+    #R_GEAR = 2
+    #PHI_GEAR = 3
+    #R_MICROSTEPPING = 8
+    #PHI_MICROSTEPPING = 8
+    #R_PULSES_PER_REVOLUTION = 200 * R_MICROSTEPPING * R_GEAR
+    #PHI_PULSES_PER_REVOLUTION = 200 * PHI_MICROSTEPPING * PHI_GEAR
     OK = 'OK'
     
     def __init__(self, port, queue):
@@ -83,6 +83,9 @@ class Driver(Serial):
                 module = importlib.import_module('Patterns.' + file.rstrip('.py'))
                 self.current = CurrentQueueItem(file, module.path)
                 for r, phi in module.path:
+		    if self.stop:
+			self.stop = False
+			break
                     while self.pause:
                         pass
                     self.send_absolute(r, phi)
